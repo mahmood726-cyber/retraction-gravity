@@ -1,0 +1,115 @@
+{
+  "audit": {
+    "methodology": "E156 Retraction Gravity (DAG Shock Propagation)",
+    "timestamp": "2026-04-10T05:02:11.899469"
+  },
+  "graph": {
+    "nodes": [
+      {
+        "id": "DATA_GBD2023",
+        "label": "GBD 2023 Covariates",
+        "type": "dataset"
+      },
+      {
+        "id": "DATA_TrialX",
+        "label": "Clinical Trial X (Cardio)",
+        "type": "dataset"
+      },
+      {
+        "id": "METH_SmithLogit",
+        "label": "Smith-Logit Transform",
+        "type": "method"
+      },
+      {
+        "id": "PROJ_Transport",
+        "label": "Global Transportability Atlas",
+        "type": "project"
+      },
+      {
+        "id": "PROJ_ProgMeta",
+        "label": "Prognostic-Meta (PROBAST)",
+        "type": "project"
+      },
+      {
+        "id": "PROJ_CardioRisk",
+        "label": "Cardio Risk Dashboard",
+        "type": "project"
+      },
+      {
+        "id": "PROJ_DiabetesRWE",
+        "label": "Diabetes RWE Simulator",
+        "type": "project"
+      }
+    ],
+    "edges": [
+      {
+        "source": "DATA_GBD2023",
+        "target": "PROJ_Transport"
+      },
+      {
+        "source": "DATA_TrialX",
+        "target": "PROJ_ProgMeta"
+      },
+      {
+        "source": "METH_SmithLogit",
+        "target": "PROJ_ProgMeta"
+      },
+      {
+        "source": "PROJ_ProgMeta",
+        "target": "PROJ_CardioRisk"
+      },
+      {
+        "source": "DATA_GBD2023",
+        "target": "PROJ_DiabetesRWE"
+      },
+      {
+        "source": "METH_SmithLogit",
+        "target": "PROJ_DiabetesRWE"
+      }
+    ]
+  },
+  "scenarios": [
+    {
+      "id": "baseline",
+      "name": "Baseline (All Valid)",
+      "portfolio_health": 100.0,
+      "node_reliabilities": {
+        "DATA_GBD2023": 1.0,
+        "DATA_TrialX": 1.0,
+        "METH_SmithLogit": 1.0,
+        "PROJ_Transport": 1.0,
+        "PROJ_ProgMeta": 1.0,
+        "PROJ_CardioRisk": 1.0,
+        "PROJ_DiabetesRWE": 1.0
+      }
+    },
+    {
+      "id": "shock_trial",
+      "name": "Shock: Trial X Retracted",
+      "portfolio_health": 75.0,
+      "node_reliabilities": {
+        "DATA_GBD2023": 1.0,
+        "DATA_TrialX": 0.0,
+        "METH_SmithLogit": 1.0,
+        "PROJ_Transport": 1.0,
+        "PROJ_ProgMeta": 0.5,
+        "PROJ_CardioRisk": 0.75,
+        "PROJ_DiabetesRWE": 1.0
+      }
+    },
+    {
+      "id": "shock_method",
+      "name": "Shock: Smith-Logit Flawed",
+      "portfolio_health": 75.85714285714286,
+      "node_reliabilities": {
+        "DATA_GBD2023": 1.0,
+        "DATA_TrialX": 1.0,
+        "METH_SmithLogit": 0.0,
+        "PROJ_Transport": 1.0,
+        "PROJ_ProgMeta": 0.7,
+        "PROJ_CardioRisk": 0.9099999999999999,
+        "PROJ_DiabetesRWE": 0.7
+      }
+    }
+  ]
+}

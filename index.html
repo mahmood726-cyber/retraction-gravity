@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retraction Gravity</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <header>
+                <h1>Retraction Gravity</h1>
+                <p class="subtitle">Portfolio Impact Mapping</p>
+            </header>
+
+            <div class="controls">
+                <label for="scenarioSelect">Select Scenario:</label>
+                <select id="scenarioSelect" class="btn-primary">
+                    <option value="baseline">Baseline (All Valid)</option>
+                    <option value="shock_trial">Shock: Trial X Retracted</option>
+                    <option value="shock_method">Shock: Smith-Logit Flawed</option>
+                </select>
+            </div>
+
+            <div class="metrics">
+                <div class="metric-card">
+                    <span class="label">Portfolio Health</span>
+                    <span id="healthScore" class="value">--%</span>
+                </div>
+            </div>
+
+            <footer class="sidebar-footer">
+                <p>TruthCert: DAG Shock Propagation</p>
+            </footer>
+        </aside>
+
+        <main class="main-content">
+            <div class="graph-container" id="graphContainer">
+                <!-- D3 Graph injected here -->
+            </div>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
