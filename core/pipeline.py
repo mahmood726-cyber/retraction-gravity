@@ -1,13 +1,16 @@
-import json
 import datetime
+import json
 import os
-
 import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from core.math import propagate_retraction_gravity, calculate_portfolio_health
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(REPO_ROOT)
 
-def run_pipeline():
+from core.math import calculate_portfolio_health, propagate_retraction_gravity
+
+RESULTS_PATH = os.path.join(REPO_ROOT, "data", "gravity_results.json")
+
+def run_pipeline(output_path=None):
     # Simulated Portfolio Graph (Nodes = Projects/Datasets, Edges = Dependencies)
     nodes = [
         {"id": "DATA_GBD2023", "label": "GBD 2023 Covariates", "type": "dataset"},
@@ -18,7 +21,7 @@ def run_pipeline():
         {"id": "PROJ_CardioRisk", "label": "Cardio Risk Dashboard", "type": "project"},
         {"id": "PROJ_DiabetesRWE", "label": "Diabetes RWE Simulator", "type": "project"}
     ]
-    
+
     edges = [
         {"source": "DATA_GBD2023", "target": "PROJ_Transport"},
         {"source": "DATA_TrialX", "target": "PROJ_ProgMeta"},
@@ -27,21 +30,21 @@ def run_pipeline():
         {"source": "DATA_GBD2023", "target": "PROJ_DiabetesRWE"},
         {"source": "METH_SmithLogit", "target": "PROJ_DiabetesRWE"}
     ]
-    
+
     # Scenario 1: Baseline (No Retractions)
     baseline_rel = {n['id']: 1.0 for n in nodes}
     baseline_health = calculate_portfolio_health(baseline_rel)
-    
+
     # Scenario 2: Trial X is Retracted (Data Fraud)
     # Affects ProgMeta directly, and CardioRisk indirectly
     shock_trial_rel = propagate_retraction_gravity(nodes, edges, "DATA_TrialX", gravity_attenuation=0.5)
     shock_trial_health = calculate_portfolio_health(shock_trial_rel)
-    
+
     # Scenario 3: Smith-Logit Method is proven mathematically flawed
     # Affects ProgMeta, CardioRisk, and DiabetesRWE
     shock_meth_rel = propagate_retraction_gravity(nodes, edges, "METH_SmithLogit", gravity_attenuation=0.3) # Methods have heavier gravity (less attenuation)
     shock_meth_health = calculate_portfolio_health(shock_meth_rel)
-    
+
     output = {
         "audit": {
             "methodology": "E156 Retraction Gravity (DAG Shock Propagation)",
@@ -72,10 +75,13 @@ def run_pipeline():
             }
         ]
     }
-    
-    with open('data/gravity_results.json', 'w') as f:
+
+    target_path = output_path or RESULTS_PATH
+    os.makedirs(os.path.dirname(target_path), exist_ok=True)
+    with open(target_path, 'w', encoding='utf-8') as f:
         json.dump(output, f, indent=2)
     print("Retraction Gravity pipeline complete. Impact graphs generated.")
+    return output
 
 if __name__ == "__main__":
     run_pipeline()
